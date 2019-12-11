@@ -19,12 +19,14 @@
 ### Basics of S3
 
 - Object-based - i.e. allows you to upload files
+- By default, all newly created buckets are PRIVATE. You can setup access control to your buckets using 1. bucket policies and 2. access control lists 
+- S3 buckets can be configured to create access logs which log all requests made to the S3 bucket. This can be sent to another bucket and even another bucket in another account. 
 - Files can be from 0 bytes to 5 TB
 - There is unliimited storage
 - Files are stored in buckets
 - A bucket is just a term for a public cloud storage resource - almost like a file
 - S3 is a universal namespace. That is, names must be unique globally. It includes the location of the region as well e.g. https://s3-eu-west-1.amazonaws.com/acloudguru
-- When you upload a file to S3, youw ill receive a HTTP 200 code (popular exam question)
+- When you upload a file to S3, you will receive a HTTP 200 code (popular exam question)
 
 ### Objects
 
@@ -44,3 +46,91 @@
 - Built for 99.99% available for the S3 platform
 - Amazon Guarantee 99.99% availability
 - Amazon guarantees 99.99999999999% (11 nines) durability for S3 information - this means that in the small amount of cases (very minimal) - data may be lost.  
+
+### S3 has the following features (fundamental to the exam)
+- Tiered storage available
+- Lifecycle management e.g. when this file is 30 days old move it to a certain tier or archive it
+- Versioning - multiple versions of objects in an S3 bucket
+- Encryption - different encryption mechanisms
+- MFA Delete - when you turn this on, if someone goes to delete this, they will need multi factor authentication 
+- Secure your data using Access Control Lists and Bucket Policies
+
+### S3 Storage Classes
+1. S3 standard: Has 99.99% availability and 99.99999999999% durability stored redundantly accross multiple facilities, and is designed to sustain the loss of 2 facilities concurrently. 
+2. S3-IA (infrequently accessed): For data that is accessed less frequently, but requires rapid access when needed. Lower fee than S3, but you are charged a retrieval fee.
+3. S3 One Zone - IA (used to be called reduced redundancy storage or RRS): For where you want a lower-cost option for infrequently accessed data, but do not require the multiple Availability Zone data resilience.
+4. S3 - Intelligent Tiering - Designed to optimise costs by automatically moving data to the most cost-effective access tier, without performance impact or operational overhead.
+5. S3 Glacier - Secure, durable and low-cost storage class for data archiving. You can reliably store any amount of data at costs that are competitive with or cheaper than on-premises solutions. Retrieval times configurable from minutes to hours. 
+6. S3 Glacier Deep Archive - S3 Glacier Deep Archive is Amazon S3's lowest-cost storage class where a retrieval time of 12 hours is acceptable. If you want data back, you have to put in a request. Need to remember this for exam!
+
+### S3 - Charges
+You are charged in the following ways:
+- Storage
+- Requests
+- Storage Management Pricing
+- Data Transfer Pricing
+- Transfer Acceleration (Enables fast, easy and secure transfer of files over long distances between your end users and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront's globally distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an optimised network path)
+- Cross Region Replication (When you want to replicate an object from Region A to Region B for disastor recovery or high availability reasons)
+
+### Encryption (important)
+- Encryption In Transit is achieved by: 
+1. SSL/TLS - that's when you are browsing using HTTPS
+Encryption At Rest (Server Side) is achieved by:
+1. S3 managed keys - SSE-S3 - Amazon manages this for you with their keys e.g. AES-256
+2. AWS key management service - this is where you and Amazon manage the keys together - SSE-KMS (more beyond the scope of the course - covered in the Security Course)
+3. Server side encryption with customer provided keys (where you give Amazon your own keys that you manage) - SSE-C
+Client Side Encryption
+- Encrypting on your Mac or PC and then you upload
+
+### Versioning with S3
+- Stores all versions of an object (including all writes even if you delete an object)
+- Great backup tool
+- Once enabled, versioning CANNOT be disabled, it can only suspended
+- Integrates with lifecycle rules
+- Comes with MFA Delete capabilities to provide additional layer of security. Uses multi factor authentication to prevent people from accidentally deleting objects. 
+- Remember that each version you upload will increase your data usage as a result of versioning
+
+### S3 Transfer Acceleration
+- Utilises the CloudFront Edge Network to accelerate your uploads to S3. Instead of uploading directly to your S3 bucket, you can use a distinct URL to upload directly to an edge location which will then transfer that file to S3. You will then get a distinct URL to upload to. 
+
+### Exam Tips
+- Remember that S3 is Object-based i.e. allows yout upload files
+- Files can be from 0 bytes to 5 TB
+- There is unlimited storage
+- Files are stored in buckets
+- S3 is a universal namespace - unique name
+- Upload an object to S3 to receive a HTTP 200 code
+- Storage classes: S3, S3 - IA, S3 - IA (One Zone), Glacier
+- Control access to buckets using a bucket ACL or using bucket policies
+
+As S3 is object-based, it is not suitable to install an OS or host a DB on. For this, you want block based storage. FILES ONLY. Successful uploads will generate a HTTP 200
+
+Key fundamentals:
+-Key (name of the object)
+-Value (Simply the data and is made up of a sequence of bytes)
+-Version ID (Important for versioning)
+-Metadata (Data about data you are storing)
+-Subresources - Access Control Lists and Torrent
+
+Read after write consistency for PUTS of new objects
+Eventual consistency for overwrite PUTS and DELETES (can take some time to propogate)
+Read the S3 FAQs before the exam
+
+Versioning
+- Stores all versions of an object (including all writes and even if you delete an object)
+- Great backup tool
+- Once enabled, it cannot be disabled, only suspended
+- Integrates with Lifecycle rules
+- Versioning's MFA Delete capabilities, which uses MFA to provide extra layer of security
+
+Lifecycle
+- Automates moving objects between different storage tiers
+- Can be used in conjunction with versioning
+- Can be applied to current versions and previous versions as well
+
+Cross Region Replication
+- Versioning must be enabled on both the source and destination bckets
+- Regions must be unique
+- Files in an existing bucket are not replicated automatically
+- All subsequent updated files will be replicated automatically
+- Delete markers are not replicated
