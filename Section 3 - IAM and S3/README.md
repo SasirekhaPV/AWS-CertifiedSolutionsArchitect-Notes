@@ -124,6 +124,25 @@ RTMP - used for media streaming
 - AWS Snowmobile is an exabyte-scale data transfer service used to move extremely large amounts of data to AWS. You can transfer up to 100PB per Snowmobile, a 45-foot long shipping container, pulled by a truck. Makes it easy to move massive volumes of data to the cloud, including video libraries, image repos, or even a complete data center migration. Transferring data with Snowmobile is secure, fast and cost effective
 - Can import to S3 and export from S3
 
+### Storage Gateway
+
+- Storage Gateway is a service that connects an on-premises software appliance with cloud-based storage to provide seamless and secure integration between an organisation's on-premesis IT environment and AWS's storage infrastructure. Enables secure storage of data to the AWS Cloud for scalable and cost-effective storage
+- Available to download as a virtual machine (VM) image that you instlal on a host in your datacenter. 
+- Supports Hyper-V or VMware ESXi
+- You can use AWS Management Console to create storage option that is right for you 
+- Comes in 3 flavours
+	1. File gateway (NFS & SMB)
+	2. Volume Gateway (iSCSI)
+		- Stored volumes
+		- Cached volumes
+	3. Tape Gateway (virtual tape library)
+- Files are stored as objects in your S3 buckets, accessed through an NFS mount point. Once objects are transferred to S3, they can be managed as native S3 objects. Basically a way of connecting your on-premise infrastructure
+- Volume gateway presents your paplications with disk volumes using iSCSI block protocol. Can be async backed up as point-in-time snapshots of your volumes, and stored in the cloud as Amazon EBS snapshots
+- They are incremental backups that capture only changed blocks. All snapshot storage is also compressed to minimise your storage charges
+- Stored volumes let you store your primary data locally, while async backing up that data to AWS. Provide your on-premises applications with low-latency access to their entire datasets, while providing durable, off-site backups. Can create storage volumes and mount them to iSCSI devices from your on-premesis storage hardware. This data is async backed up to Amazon Simple Storage Service (Amazon S3) in the form of Amazon Elastic Block Store (Amazon EBS) snapshots. 1GB - 16TB in size for Stored Volumes. 
+- Cached volumes doesn't do the data set locally, only the most frequently used data set locally in  your storage gateway. Can create storage volumes of up to 32 TB in size and attach to them as iSCSI devices from your on-premises application services. Your gateway stores data that you write to these volumes in Amazon S3 and retains recently read data in your on-premeses storage gateway's cache and upload buffer storage. 1GB - 32 TB in size for cached volumes. 
+- Each tape gateway is preconfigured with a media changer and tap drives, which are available to your existing client backup applications as iSCSI devices. YOu add tape cartridges as you need to archive your data. Supported by NetBackup, Backup Exec, Veeam etc.
+
 
 ### Exam Tips
 
@@ -181,3 +200,9 @@ CloudFront
 Snowball 
 - Understand what it is
 - Snowball can import to S3 and export from S3
+
+Storage Gateway
+- For flat files, stored directly on S3
+- Stored Volumes: Entire dataset is stored on site and is async backed up to S3
+- Cached Volumes: Entire dataset is stored on S3 and the most frequently accessed data is cached on site 
+- Gateway Virtual Tape Library
