@@ -33,6 +33,11 @@
 	- Can be purchased as a reservation for up to 70% off the demand price
 
 
+## Security Groups 
+
+
+
+
 ## Exam Tips
 
 - EC2 is a web service that provides resizable computer capacity in the cloud
@@ -44,3 +49,8 @@
 		- If the Spot instance is terminated by EC2, you will not be charged for a partial hour of usage. If you terminate the instance yourself, you will be charged for any hour in which the instance ran.
 	4. Dedicated hosts
 - EC2 Instance Types
+
+- You can encrypt root device volumes (very popular exam topic)
+- Termination protection is turned off by default, so you must turn it on. Once you turn it off, you have to turn it off again
+- On an EBS-backed instance, the default action is for the root EBS volume to be deleted when the instance is terminated
+- EBS root volumes of your default AMI's can be encrypted. You can also use a third party tool such as bit locker to encrypt hte root volume, or this can be done when creating AMI's in the AWS console or using the API
