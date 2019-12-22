@@ -1,6 +1,7 @@
 # SECTION 9 | Applications
 
 ## SQS
+
 - Example: Travel website. User puts a query into the web server and they want to go to destination and enter a date. EC2 instance takes what user is requesting and stores in an SQS queue. We then have a fleet of EC2 web servers polling that queue and looking for that SQS message. They then query all the different airline servers and check the flight cost. They then take info and send the info back to the web server who sends it back to the user. 
 - FIFO Queue are definitely ordered and you will get one time processing. THe order in which messages are sent and received is strictly preserved and a message is delivered once and remains available until a consumer processes and deletes it; duplicates are not introduced into the queue. 
 - It is a web service that gives you access to a message queue that can be used to store messages while waiting for a computer to process them
@@ -23,6 +24,71 @@
 - Tasks represents invocations of various processing steps in an application which can be performed by executable code, web service calls, human actions and scripts
 - Amaazon uses it themselves inside their warehouse when they process payments and a person has to look up and pack the order
 - If you have a scenario question with a human based element, you will NOT be using SQS as humans can't poll the SQS queue. Instead, you will be using SWF
+
+## Simple Notification Service
+
+- Web service that makes it easy to set up, operate, and send notifications from the cloud
+- It provides developers with a highly scalable, flexible, and cost-effective capability to publish messages from an application and immediately deliver them to subscribers or to other applications
+- Allows push notifications to Apple, Google, Fire OS and Windows Devices as well as Android Devices
+- Can also deliver notifications by SMS text messages or by email to Amazon SQS or to any HTTP endpoint
+- Pushes info to mobile devices
+- Groups multiple recipients using topics. A topic is an access point for allowing recipients to dynamically subscribe for identical copies of the same notification. 
+- When you set a billing alert for example, that's a billing topic. You can have subscribers to that topic.
+- You can group together iOS, Android and SMS recipients. When you public once to a topic, SNS delivers appropriately formatted copies of your message to each subscriber
+- To prevent messages being lost, all messages are published to Amazon SNS are stored redundantly across AZs
+
+## Elastic Transcoder
+
+- Media Transcoder in the cloud
+- Convert media files from original source format into different formats that will play on smartphones, tablets, PCs, etc.
+- Provides transcoding presets for popular output formats, which means that you don't need to guess about which settings work best on particular devices
+- Pay based on the minutes that you transcode and the resolution at which you transcode as well
+- You have an S3 Bucket -> That triggers a Lambda Function (essentially looks @ video, looks at meta data and sends to transcoder) -> Elastic Transcoder -> Stores the transcoded in another S3 Bucket
+
+## API Gateway
+
+- Fully managed service that makes it easy for developers to publish, maintain, monitor and secure APIs at any scale
+- It's basically a doorway into your AWS environment
+- You can create an API that acts as a "front door" for applications to access data, business logic, or functionality from your back-end services, such as applications running on Amazon Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, or any web application
+- Basically a doorway into your AWS environment
+- The users do an API call to API Gateway (front door to AWS environment) - this could be passed to Lambda, EC2 or DynamoDBZ
+- It can expose HTTP endpoints to define a RESTful API
+- Severless-ly connect to services like Lambda and DynamoDB
+- Send each API endpoint to a different target
+- Run efficiently with low cost
+- Scale effortlessly
+- Track and control usage by API key
+- Throttle requests to prevent attacks (sometimes attackers may flood the API)
+- Maintain multiple versions of API - test and dev for example
+
+## API Gateway Configuration
+
+- Define an API (container)
+- Define Resources and nested resources (URL paths)
+- For each response:
+	- Select supported HTTP methods (verbs)
+	- Set security
+	- Choose target (such as EC2, Lambda, DynamoDB, etc.)
+	- Set request and response transformations
+
+## API Gateway Deployments
+
+- Deploy API to a stage:
+	- Use API Gateway domain by default
+	- Can use custom domain
+	- Now supports AWS Certificate Manager: free SSL/TLS certs
+
+## API Gateway Caching
+
+- Reduces the number of calls made to your endpoints and improve latency of the requests to your API
+- WHen enabling caching for a stage, API Gateway caches responses from your endpoint for a specified TTL period, in seconds
+- It then responds to the requests by looking up the endpoint response from the cache instead of making a request to your endpoint
+
+## Same Origin Policy
+
+- In computing, the same-origin policy is an important concept in the web app security model
+- Under the policy, a web browser permits scripts contained in a first web page to access data in a second web page, but only if both web pages have the same origin
+- This is done to prevent Cross-Sit Scripting (XSS) attacks
 
 # Exam Tips
 
@@ -48,3 +114,21 @@
 - Workflow Starters - an application that can initiate or start a workflow. Could be your e-commerce website following the placement of an order, or a mobile app searching for bus times
 - Deciders - Control the flow of activity tasks in a workflow execution. If something has finished (or failed) in a workflow, a Decider decides what to do next
 - Activity Workers - carry out the activity tasks
+
+## SNS Benefits
+
+- Instantaneous, push-based delivery (NO polling)
+- Simple APIs and easy integration with applications
+- Flexible message delivery over multiple transport protocols
+- Inexpensive, PAYG model with no up-front costs
+- Web based AWS Management Console offers the simplicity of a point and click interface
+
+## SNS vs SQS
+
+- Both messaging systems
+- SNS is push via notification or text message
+- SQS polls and therefore pulls
+
+## Elastic Transcoder
+
+- Converts media files from their original source formats into different formats that will play on smartphones, tablets, PCs, etc. 
