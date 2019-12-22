@@ -89,18 +89,89 @@
 - In computing, the same-origin policy is an important concept in the web app security model
 - Under the policy, a web browser permits scripts contained in a first web page to access data in a second web page, but only if both web pages have the same origin
 - This is done to prevent Cross-Sit Scripting (XSS) attacks
+	- Enforced by web browsers
+	- Ignored by tools like PostMan and curl
+
+## CORS Explained
+
+- One way the server at the other end (not the client code in the browser) can relax the same-origin policy
+- Cross-origin resource sharing (CORS) is a mechanism that allows restricted resources e.g. fonts on a web page to be requested from another domain outside the domain from which the first resouce was served
+
+## CORS in Action
+
+- Server returns a response that says: "These other domains are approved to GET this URL"
+- Error - "Origin policy cannot be read at the remote resource" You need to enable CORS at the gateway
+
+## Kinesis 101
+
+- Streaming data is generated continuously by thousands of data sources, whichtypically send in the data records simultaneously, and in small sizes (order of Kilobytes)
+	- Purchases from online stores such as Amazon.com such as ID and transactional data
+	- Stock prices
+	- Game data (as the gamer plays)
+	- Social network data
+	- Geospatial data such as uber.com - where you are on a map is always streamed to a central source
+	- IOT sensor data
+- Kinesis is a platform on AWS to send your streaming data to. It makes it easy to load and analyse streaming data, and also providing the ability for you to build your own custom applications for your business needs
+- 3 different types of kinesis:
+	- Streams
+	- Firehose
+	- Analytics
+- Streams
+	- Producers stream the data to kinesis and Streams is a place to store that data for 24 hours but can store it up to 7 days. Your data is contained in Shards. You may have a Shard for geospatial or stock data for example. The data stored in Shards can be analysed by consumers via EC2. Once the EC2 has analysed the data they can store in DynamoDB, S3, EMR or Redshift. 
+	- Allows you to persistently store your data from 24 hours to 7 days whilst consumers can analyse the data and then they might then store them elsewhere
+	- Shards are 5 transactions per second for reads, up to a maximum total data read rate of 2 MB per second and up to 1000 records per second for writes, up to a maximum total data write rate of 1 MB per second (including partition keys)
+	- The data capacity of your stream is a function of the number of shards that you specify for the stream. The total capacity of the stream is the sum of the capacities of its shards (won't be quizzed on this detailed info though)
+	- Has persistence
+- Firehose
+	- Producers such as smartphones and laptops - sent to firehose. There is no persistent storage. It is analysed as it comes in. It triggers a Lambda function -> runs code and then outputs it to somewhere safe such as S3 and then you could even then import it into Redshift
+	- No persistence
+- Analytics
+	- Works with streams and with firehose. It can analyse data on the fly inside either service. It stores it on S3, Redshift or Elastic cluster
+
+## Web Identity Federation
+
+- Lets you give your users access to AWS resources after they ahve authenticated with a web based identity provider such as Amazon, Facebook or Google. 
+- User then receives authentication code from the Web ID provider, which they can trade for temporary AWS security credentials
+
+## Amazon Cognito
+
+- Web identity federation service
+- Sign up and sign in to your apps
+- You can add access for guest users
+- Acts as an identity broker between your application and Web ID providers, so you don't need to write any additional code
+- Syncs user data for multiple devices - if you change username on your mobile phone, this setting will be replicated to toher devices
+- Recommended for all mobile applications AWS services
+- E.g. autheticate with FB - FB gives authetication token - send token to cognito - cognito will grant access to AWS environment depending on permissions. They can do things such as use Lambda functions etc
+- Cognito brokers between the app and FB or Google to provide temporary credentials which map to an IAM role allowing acces to the required resources
+- No need for application to embed or store AWS credentials locally on the device and provides users a seamless experience across all mobile devices
+- User Pools are user directores to manage sign up and sign in functionality for mobile and web apps
+- Users can sign in directly to the User Pool, or using Facebook, Amazon or Google
+- Acts as an Identity Broker between the identity provider and AWS. Successful authentication generates a JSON web token (JWT) - means you have successfully authenticated
+
+## Cognito Identity Pools
+
+- Provide temporary AWS credentials to access AWS services like S3 or DynamoDB
+- It is the actual granting of the authentication to your AWS resources
+
+## Cogntio Synchronisation
+
+- Tracks the association between user identity and the various different devices they sign in from. In order to provide a seamless user experience for your application, Cognito uses Push Synchronization to push updates and synchronise user data accross multiple devices. 
+- Uses SNS to send a notification to all the devices associated with a given user identity whenever data stored in the cloud changes
+- E.g user changes setting -> Cognito sends out a silent push notification to phone or tablet so all devices are synced with the new data
 
 # Exam Tips
 
 ## SQS
 
 - SQS is pull based not pushed based. EC2 instances are pulling the messages down from the queue. They are not pushing the messages out
-- Messages are 256KB in size when you are using SQS. You can go up to 2GB but you have to go up to  S#
+- Messages are 256KB in size when you are using SQS. You can go up to 2GB but you have to go up to S3 then. 
 - Messages can be kept in the queue from 1 minute to 14 days; the default retention period is 4 days
 - Visibility time out: the aount of time that the message is invisible in the SQS queue after a reader picks up that message. Provided the job is processed before the visibility time out expires, the message will then be deleted from the queue. If the job is not processed within that time, the message will become visible again and another reader will process it. This could result in the same message being delivered twice
 - Visibility timeout maximum is 12 hours. The EC2 instance has this amount of time to process. 
 - SQS guarantees that your messages will be processed at least once
 - Amazon SQS long polling is a way to retrive messages from your Amazon SQS queues. While the regular short polling returns immediately (even if the message queue being polled is empty), long polling doesn't return a response until a message arrives in the message queue, or the long poll times out. This is a way of saving money. 
+- Standard order not guaranteed and messages can be delivered more than once
+- FIFO is strictly maintained and messages are delivered only once
 
 ## SWF vs SQS
 
@@ -108,6 +179,7 @@
 - Amazon SWF presents a task-oriented API, whereas Amazon SQS offers a message-oriented API
 - SWF ensures that a task is assigned only once and is never duplicated. With Amazon SQS, you need to handle duplicated messages and may also need to ensure that a message is processed only once
 - SWF keeps track of all the task and events in an application. With SQS, you need to implement your own application-level tracking, especially if your application uses multiple queues
+- SWF task oriented API whereas Amazon SQS offers a message oriented API
 
 ## SWF Actors
 
@@ -132,3 +204,27 @@
 ## Elastic Transcoder
 
 - Converts media files from their original source formats into different formats that will play on smartphones, tablets, PCs, etc. 
+
+## API Gateway
+
+- Door to AWS environment
+- Caching capabilites to increase performance
+- API Gateway is low cost and scales automatically 
+- You can throttle API Gateway to prevent attacks
+- You can log results to CloudWatch
+- If you are using Javascript/AJAX that uses multiple domains with API Gateway, ensure that you have enabled CORS on API Gateway
+- CORS is enforced by the client - your browser
+
+## Kinesis
+
+- Know the difference between Streams or Firehose. You will be given different scenario questions and you must choose the most relevant service
+- If you want to analyse data inside firehose and streams - then use Analytics
+
+## Cognito
+
+- Federation allows users to authenticate with a Web Identity Provider such as Google, Facebook or Amazon
+- User authenticates first with the Web ID Provider and receives and authentication token, which is exchanged for temporary AWS credentials allowing them to assume an IAM role
+- It is an Identity Broker which handles interaction between your applications and the Web ID provider
+- Critically, know user pools and identity pools
+- User pool is user based. It handles things like user registration, authentication adn account recovery
+- Identity pools authorise access to your AWS resources and authorises you to your AWS resources
